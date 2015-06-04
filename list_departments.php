@@ -52,7 +52,7 @@ $departments = $dept->get_departments();
                                 <th>Name</th>
                             </tr>
                             <?php
-			    utility::pr($departments);
+			    //utility::pr($departments);
                             if (is_array($departments) && count($departments)) {
                                 foreach ($departments as $department) {
                                     echo "<tr>";

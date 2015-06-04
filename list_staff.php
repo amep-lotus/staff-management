@@ -63,7 +63,7 @@ $status = $user->get_staff_status();
                             </tr>
                             <?php
 			    //utility::pr($staff_type);
-			    utility::pr($departments);
+			    //utility::pr($departments);
                             if (is_array($staff) && count($staff)) {
                                 foreach ($staff as $_staff) {
                                     echo "<tr>";
