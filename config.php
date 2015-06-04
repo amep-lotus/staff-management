@@ -1,7 +1,7 @@
 <?php
 
 define('HOSTNAME', 'localhost');
-define('USERNAME', 'jd');
-define('PASSWORD', 'jd');
+define('USERNAME', 'root');
+define('PASSWORD', 'tcrc');
 define('DATABASE', 'staff_management');
 

@@ -17,6 +17,12 @@ switch($_GET['action']) {
 	case 'add_department':
 		header("Location:add_department.php");
 		break;
+	case 'list_leavetypes':
+		header("Location:list_leavetypes.php");
+		break;
+	case 'add_leavetype':
+		header("Location:add_leavetype.php");
+		break;
 	default:
 		header("Location:logout.php");
 }

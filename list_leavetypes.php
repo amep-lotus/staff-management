@@ -1,7 +1,17 @@
 <?php
+
 require_once 'classes/class.utility.php';
 utility::check_login_and_redirect();
-// User will be redirected to login page before it reaches this section
+
+require_once 'config.php';
+require_once 'classes/class.db.php';
+require_once 'classes/class.leavetype.php';
+
+$db = new database;
+$lt = new leavetype($db);
+
+$leavetypes = $lt->get_leavetypes();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +23,7 @@ utility::check_login_and_redirect();
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>List Departments</title>
+        <title>Dashboard</title>
 
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -33,34 +43,38 @@ utility::check_login_and_redirect();
         <div class="container">
             <div>
                 <a href="logout.php" class="btn btn-group-lg btn-danger">Logout</a>
-            </div>
+			</div>
         </div> <!-- /container -->
-        <br />
+		<br />
         <div class="container">
             <div>
-                <a href="index.php?action=list_departments" class="btn btn-group-lg btn-danger">List Departments</a>
-            </div>
-            <br />
-            <div>
-                <a href="index.php?action=add_department" class="btn btn-group-lg btn-danger">Add Department</a>
-            </div>
-        </div> <!-- /container -->
-        <br />
-        <div class="container">
-            <div>
-                <a href="index.php?action=list_leavetypes" class="btn btn-group-lg btn-info">List Leave Types</a>
-            </div>
-            <br />
-            <div>
-                <a href="index.php?action=add_leavetype" class="btn btn-group-lg btn-info">Add Leave Type</a>
-            </div>
+                <a href="index.php?action=dashboard" class="btn btn-group-lg btn-danger">Back to Dashboard</a>
+			</div>
+			<br />
         </div> <!-- /container -->
 
-        <div class="container">
-            <div>
-                
-            </div>
-        </div>
+		<div class="container">
+			<table class="table table-hover table-responsive table-striped">
+				<tr>
+					<td>Sr. No</td>
+					<td>Name</td>
+				</tr>
+				<?php
+					if(is_array($leavetypes) && count($leavetypes)) {
+						foreach($leavetypes as $leavetype) {
+							echo "<tr>";
+								echo "<td>{$leavetype['id']}</td>";
+								echo "<td>{$leavetype['name']}</td>";
+							echo "</tr>";
+						}
+					} else {
+						?>
+				<td colspan="2">No Leave Type found</td>
+						<?php
+					}
+				?>
+			</table>
+		</div>
 
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     </body>

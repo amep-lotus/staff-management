@@ -1,7 +1,21 @@
 <?php
 require_once 'classes/class.utility.php';
 utility::check_login_and_redirect();
-// User will be redirected to login page before it reaches this section
+
+require_once 'config.php';
+require_once 'classes/class.db.php';
+require_once 'classes/class.leavetype.php';
+
+$db = new database;
+$lt = new leavetype($db);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	utility::pr($_POST);
+	if($lt->add($_POST)) {
+		header("Location:index.php?action=list_leavetypes");
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +27,7 @@ utility::check_login_and_redirect();
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>List Departments</title>
+        <title>Add Leave Type</title>
 
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -33,34 +47,34 @@ utility::check_login_and_redirect();
         <div class="container">
             <div>
                 <a href="logout.php" class="btn btn-group-lg btn-danger">Logout</a>
-            </div>
+			</div>
         </div> <!-- /container -->
-        <br />
+		<br />
         <div class="container">
             <div>
-                <a href="index.php?action=list_departments" class="btn btn-group-lg btn-danger">List Departments</a>
-            </div>
-            <br />
-            <div>
-                <a href="index.php?action=add_department" class="btn btn-group-lg btn-danger">Add Department</a>
-            </div>
-        </div> <!-- /container -->
-        <br />
-        <div class="container">
-            <div>
-                <a href="index.php?action=list_leavetypes" class="btn btn-group-lg btn-info">List Leave Types</a>
-            </div>
-            <br />
-            <div>
-                <a href="index.php?action=add_leavetype" class="btn btn-group-lg btn-info">Add Leave Type</a>
-            </div>
+                <a href="index.php?action=dashboard" class="btn btn-group-lg btn-danger">Back to Dashboard</a>
+			</div>
+			<br />
         </div> <!-- /container -->
 
-        <div class="container">
-            <div>
-                
-            </div>
-        </div>
+		<div class="container">
+			<form action="" method="POST">
+				<table class="table table-hover table-responsive table-striped">
+					<tr>
+						<td>Name</td>
+						<td>
+							<input type="text" name="leavetype" value="" placeholder="Enter Leave Type" />
+						</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<input type="submit" value="Submit" class="btn btn-primary" />
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
 
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     </body>
