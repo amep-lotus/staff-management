@@ -12,13 +12,17 @@ class database {
         return $this;
     }
 
-    function select($table = '', $conditions = '') {
+    function select($table = '', $conditions = '', $count = false) {
         $return = array();
         if (trim($table) != '') {
             if (trim($conditions) == '') {
                 $conditions = ' 1 = 1';
             }
-            $sql = "SELECT * FROM $table WHERE $conditions;";
+	    if($count) {
+		$sql = "SELECT count(*) as count_rows FROM $table WHERE $conditions;";
+	    } else {
+		$sql = "SELECT * FROM $table WHERE $conditions;";
+	    }
             $this->query($sql);
             if ($this->valid_resource && ($this->num_rows > 0)) {
                 return true;

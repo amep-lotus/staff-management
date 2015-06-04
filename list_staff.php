@@ -4,12 +4,20 @@ utility::check_login_and_redirect();
 
 require_once 'config.php';
 require_once 'classes/class.db.php';
+require_once 'classes/class.user.php';
 require_once 'classes/class.department.php';
 
 $db = new database;
+$user = new user($db);
 $dept = new department($db);
 
-$departments = $dept->get_departments();
+$staff = $user->get_staff();
+
+$departments = $dept->get_departments_list();
+
+$staff_type = $user->get_staff_types();
+$status = $user->get_staff_status();
+
 
 ?>
 <!DOCTYPE html>
@@ -44,25 +52,30 @@ $departments = $dept->get_departments();
                 include_once 'sidebar.php';
                 ?>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h2 class="sub-header">Departments</h2>
+                    <h2 class="sub-header">Staff</h2>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <tr>
-                                <th>Sr. No</th>
                                 <th>Name</th>
+                                <th>Department</th>
+                                <th>Staff Type</th>
+                                <th>Status</th>
                             </tr>
                             <?php
+			    //utility::pr($staff_type);
 			    utility::pr($departments);
-                            if (is_array($departments) && count($departments)) {
-                                foreach ($departments as $department) {
+                            if (is_array($staff) && count($staff)) {
+                                foreach ($staff as $_staff) {
                                     echo "<tr>";
-                                    echo "<td>{$department['id']}</td>";
-                                    echo "<td>{$department['name']}</td>";
+					echo "<td>{$_staff['name']}</td>";
+					echo "<td>{$departments[$_staff['department_id']]}</td>";
+					echo "<td>{$staff_type[$_staff['staff_type']]}</td>";
+					echo "<td>{$status[$_staff['status']]}</td>";
                                     echo "</tr>";
                                 }
                             } else {
                                 ?>
-                                <tr><td colspan="2">No department found</td></tr>
+                                <tr><td colspan="4">No Staff found</td></tr>
                                 <?php
                             }
                             ?>

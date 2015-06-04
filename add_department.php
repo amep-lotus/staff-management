@@ -10,12 +10,11 @@ $db = new database;
 $dept = new department($db);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	utility::pr($_POST);
-	if($dept->add($_POST)) {
-		header("Location:index.php?action=list_departments");
-	}
+    utility::pr($_POST);
+    if ($dept->add($_POST)) {
+	header("Location:index.php?action=list_departments");
+    }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,55 +26,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Add Department</title>
+        <title>Dashboard </title>
 
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <!--<link href="signin.css" rel="stylesheet">-->
+        <link href="css/dashboard.css" rel="stylesheet">
 
-        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
     </head>
 
     <body>
 
-        <div class="container">
-            <div>
-                <a href="logout.php" class="btn btn-group-lg btn-danger">Logout</a>
-			</div>
-        </div> <!-- /container -->
-		<br />
-        <div class="container">
-            <div>
-                <a href="index.php?action=dashboard" class="btn btn-group-lg btn-danger">Back to Dashboard</a>
-			</div>
-			<br />
-        </div> <!-- /container -->
+	<?php
+	include_once 'nav.php';
+	?>
 
-		<div class="container">
-			<form action="" method="POST">
-				<table class="table table-hover table-responsive table-striped">
-					<tr>
-						<td>Name</td>
-						<td>
-							<input type="text" name="department" value="" placeholder="Enter Department name" />
-						</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td>
-							<input type="submit" value="Submit" class="btn btn-primary" />
-						</td>
-					</tr>
-				</table>
-			</form>
-		</div>
+        <div class="container-fluid">
+            <div class="row">
+		<?php
+		include_once 'sidebar.php';
+		?>
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <h2 class="sub-header">Add Department</h2>
+                    <form action="" method="POST">
+			<table class="table table-hover table-responsive table-striped">
+			    <tr>
+				<td>Name</td>
+				<td>
+				    <input type="text" name="department" value="" placeholder="Enter Department name" />
+				</td>
+			    </tr>
+			    <tr>
+				<td>&nbsp;</td>
+				<td>
+				    <input type="submit" value="Submit" class="btn btn-primary" />
+				</td>
+			    </tr>
+			</table>
+		    </form>
+                </div>
+            </div>
+        </div>
 
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
     </body>
 </html>

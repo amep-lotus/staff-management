@@ -11,6 +11,7 @@ $db = new database;
 $lt = new leavetype($db);
 
 $leavetypes = $lt->get_leavetypes();
+$leavetype_status = $lt->get_leavetype_status();
 
 ?>
 <!DOCTYPE html>
@@ -23,59 +24,61 @@ $leavetypes = $lt->get_leavetypes();
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Dashboard</title>
+        <title>Dashboard </title>
 
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <!--<link href="signin.css" rel="stylesheet">-->
+        <link href="css/dashboard.css" rel="stylesheet">
 
-        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
     </head>
 
     <body>
 
-        <div class="container">
-            <div>
-                <a href="logout.php" class="btn btn-group-lg btn-danger">Logout</a>
-			</div>
-        </div> <!-- /container -->
-		<br />
-        <div class="container">
-            <div>
-                <a href="index.php?action=dashboard" class="btn btn-group-lg btn-danger">Back to Dashboard</a>
-			</div>
-			<br />
-        </div> <!-- /container -->
+        <?php
+        include_once 'nav.php';
+        ?>
 
-		<div class="container">
-			<table class="table table-hover table-responsive table-striped">
-				<tr>
-					<td>Sr. No</td>
-					<td>Name</td>
-				</tr>
-				<?php
-					if(is_array($leavetypes) && count($leavetypes)) {
-						foreach($leavetypes as $leavetype) {
-							echo "<tr>";
-								echo "<td>{$leavetype['id']}</td>";
-								echo "<td>{$leavetype['name']}</td>";
-							echo "</tr>";
-						}
-					} else {
-						?>
-				<td colspan="2">No Leave Type found</td>
-						<?php
-					}
-				?>
-			</table>
-		</div>
+        <div class="container-fluid">
+            <div class="row">
+                <?php
+                include_once 'sidebar.php';
+                ?>
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <h2 class="sub-header">Leave Types</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Sr. No</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                            </tr>
+                            <?php
+                            if (is_array($leavetypes) && count($leavetypes)) {
+                                foreach ($leavetypes as $leavetype) {
+                                    echo "<tr>";
+                                    echo "<td>{$leavetype['id']}</td>";
+                                    echo "<td>{$leavetype['name']}</td>";
+                                    echo "<td><a href='#' class='btn btn-info'>{$leavetype_status[$leavetype['status']]}</a></td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                ?>
+                                <tr><td colspan="2">No Leave Type found</td></tr>
+                                <?php
+                            }
+                            ?>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
     </body>
 </html>
