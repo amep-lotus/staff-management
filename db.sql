@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 04, 2015 at 11:46 AM
+-- Generation Time: Jun 04, 2015 at 03:52 PM
 -- Server version: 5.5.40
 -- PHP Version: 5.3.10-1ubuntu3.15
 
@@ -78,36 +78,32 @@ INSERT INTO `leave_types` (`id`, `name`, `status`) VALUES
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(8) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL,
-  `deparment_id` int(8) NOT NULL,
+  `department_id` int(8) NOT NULL,
   `username` varchar(128) NOT NULL,
   `password` varchar(40) NOT NULL,
   `salt` varchar(50) DEFAULT NULL,
   `hash` varchar(50) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL COMMENT '1 => Admin, 2 => Department Admin, 3 => Staff',
+  `staff_type` int(2) NOT NULL DEFAULT '1' COMMENT '1 => Permanent, 2 => Contractual',
   `created` int(32) NOT NULL,
-  `status` int(2) DEFAULT NULL,
-  `gender` int(2) NOT NULL,
+  `status` int(2) DEFAULT '1' COMMENT '1 => Active, 2 => Inactive',
+  `gender` int(2) NOT NULL COMMENT '1 is male and 2 is female',
   `dob` varchar(20) NOT NULL,
   `doj` varchar(20) NOT NULL,
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `deparment_id`, `username`, `password`, `salt`, `hash`, `type`, `created`, `status`, `gender`, `dob`, `doj`, `description`) VALUES
-(1, 'Admin', 0, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', NULL, NULL, 1, 0, 1, 0, '', '', '');
+INSERT INTO `users` (`id`, `name`, `department_id`, `username`, `password`, `salt`, `hash`, `type`, `staff_type`, `created`, `status`, `gender`, `dob`, `doj`, `description`) VALUES
+(1, 'Admin', 0, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', NULL, '23e09af39c017c81c827e83c84187c9ba9ff978e', 1, 1, 0, 1, 0, '', '', ''),
+(6, 'Tashi', 1, 'Tashi', 'eacc2fb04cce3bb513343ad14812ee0407a4d04a', NULL, NULL, 3, 1, 0, 1, 1, 'July 03, 1984', 'June 03, 2015', 'Tashi'),
+(7, 'Tashi 2', 1, '', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', NULL, NULL, 3, 1, 0, 1, 1, 'July 03, 1984', 'June 03, 2015', 'Admin'),
+(8, 'Tashi 3', 1, 'tashi3', '631c200e6b30d2b695419e83a6171be16f075c1d', NULL, NULL, 2, 1, 0, 1, 1, 'July 03, 1984', 'June 03, 2015', 'Tashi');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-
-ALTER TABLE `users` ADD `staff_type` INT( 2 ) NOT NULL DEFAULT '1' COMMENT '1 => Permanent, 2 => Contractual' AFTER `type` ;
-
-ALTER TABLE `users` CHANGE `type` `type` INT( 11 ) NULL DEFAULT NULL COMMENT '1 => Admin, 2 => Department Admin, 3 => Staff';
-
-ALTER TABLE `users` CHANGE `status` `status` INT( 2 ) NULL DEFAULT NULL COMMENT '1 => Active, 2 => Inactive';
-

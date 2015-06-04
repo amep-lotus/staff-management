@@ -34,7 +34,9 @@ class user {
 			    . "SET `hash` = '$rand_hash' "
 			    . "WHERE"
 			    . " `id` = {$_SESSION['id']}";
-		    if (mysql_query($sql)) {
+		    $data = array('hash' => $rand_hash, 'status' => 1);
+		    $_conditions = "id={$_SESSION['id']}";
+		    if ($this->db->update($this->table, $data, $_conditions)) {
 			setcookie('remember_me', $rand_hash);
 		    }
 		}
@@ -48,9 +50,12 @@ class user {
     }
 
     function logout() {
+	$this->is_logged_in = false;
+	$_hash = $_COOKIE['remember_me'];
+	setcookie('remember_me', '', time() - (3600 * 12));
+	$this->remove_hash($_hash);
 	unset($_SESSION['id']);
 	unset($this->user);
-	$this->is_logged_in = false;
 	return true;
     }
 
@@ -110,9 +115,9 @@ class user {
     function get_department_admins() {
 	return $this->get_users(2);
     }
-    
+
     private function get_users($type = 3, $conditions = '', $count = false) {
-	if(trim($conditions) == '') {
+	if (trim($conditions) == '') {
 	    $conditions = "type=$type";
 	}
 	if ($this->db->select($this->table, $conditions, $count)) {
@@ -121,29 +126,29 @@ class user {
 	    return false;
 	}
     }
-    
+
     function department_admin_exists($department_id = 0) {
-	if(!$department_id) {
+	if (!$department_id) {
 	    return false;
 	}
 	$_data = $this->get_users(2, "department_id = $department_id", 1);
-	if(is_array($_data) && count($_data) && isset($_data[0]['count_rows'])) {
+	if (is_array($_data) && count($_data) && isset($_data[0]['count_rows'])) {
 	    return $_data[0]['count_rows'];
 	} else {
 	    return false;
 	}
     }
-    
+
     function get_staff_types() {
 	return array(1 => 'Permanent', 2 => 'Contractual');
     }
-    
+
     function get_staff_status() {
 	return array(1 => 'Active', 2 => 'Inactive');
     }
-    
+
     function remove_existing_department_admin($department_id = 0) {
-	if(!$department_id) {
+	if (!$department_id) {
 	    return false;
 	} else {
 	    $sql = ""
@@ -157,7 +162,10 @@ class user {
 		return false;
 	    }
 	}
-	
+    }
+
+    function remove_hash($_hash = '') {
+	$this->db->update($this->table, array('hash' => ''), "`hash` = '$_hash'");
     }
 
 }
