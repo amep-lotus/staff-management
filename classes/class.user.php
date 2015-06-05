@@ -10,19 +10,23 @@
 class user {
 
     public $db;
-    public $user = array();
+    private $user = array();
     private $is_logged_in = false;
     private $table = 'users';
 
     function __construct($db) {
 	$this->db = $db;
+	if(isset($_SESSION['id']) && trim($_SESSION['id']) != '' && is_numeric($_SESSION['id'])) {
+	    $this->load_user_details();
+	}
     }
 
-    function login($username, $password, $remember_me = false) {
+    function login($username, $password, $remember_me = false, $type = 1) {
 	if (trim($username) != '' && trim($password) != '') {
 	    $conditions = " "
 		    . "username = '$username' "
-		    . "&& password = '" . sha1($password) . "'";
+		    . "&& password = '" . sha1($password) . "'"
+		    . "&& type = $type";
 	    if ($this->db->select($this->table, $conditions)) {
 		$this->user = $this->db->get_results();
 		$this->is_logged_in = true;
@@ -59,11 +63,15 @@ class user {
     }
 
     function get_name() {
-	return $this->user['fname'] . ' ' . $this->user['lname'];
+	//return $this->user['fname'] . ' ' . $this->user['lname'];
     }
 
     function get_email() {
-	return $this->user['email'];
+	return $this->user[0]['email'];
+    }
+
+    function get_department_id() {
+	return $this->user[0]['department_id'];
     }
 
     function add($post = array()) {
@@ -121,8 +129,13 @@ class user {
 	}
     }
 
-    function get_staff() {
-	return $this->get_users(3);
+    function get_staff($department_id = 0) {
+	if(!$department_id) {
+	    $conditions = '';
+	} else {
+	    $conditions = "department_id=$department_id";
+	}
+	return $this->get_users(3, $conditions);
     }
 
     function get_department_admins() {
@@ -186,4 +199,9 @@ class user {
 	return false;
     }
 
+    function load_user_details() {
+	if($this->db->select($this->table, "id={$_SESSION['id']}")) {
+	    $this->user = $this->db->get_results();
+	}
+    }
 }

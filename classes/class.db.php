@@ -12,17 +12,38 @@ class database {
 	return $this;
     }
 
-    function select($table = '', $conditions = '', $count = false) {
+    function select(
+	    $table = '', 
+	    $conditions = '', 
+	    $count = false, 
+	    $group_by = '', 
+	    $agg = '', 
+	    $agg_col = '',
+	    $agg_other_cols = ''
+	    ) {
 	$return = array();
 	if (trim($table) != '') {
 	    if (trim($conditions) == '') {
 		$conditions = ' 1 = 1';
 	    }
 	    if ($count) {
-		$sql = "SELECT count(*) as count_rows FROM $table WHERE $conditions;";
+		$sql = "SELECT count(*) as count_rows ";
 	    } else {
-		$sql = "SELECT * FROM $table WHERE $conditions;";
+		$sql = "SELECT * ";
 	    }
+	    
+	    if(trim($agg) != '' && trim($agg_col) != '') {
+		$sql = "SELECT $agg($agg_col) as $agg_col, $agg_other_cols ";
+	    }
+	    
+	    $sql .= "FROM $table WHERE $conditions";
+	    if(trim($group_by) != '') {
+		$sql .= " GROUP BY $group_by;";
+	    } else {
+		$sql .= ";";
+	    }
+	    
+	    //echo $sql."<br />";
 	    $this->query($sql);
 	    if ($this->valid_resource && ($this->num_rows > 0)) {
 		return true;
