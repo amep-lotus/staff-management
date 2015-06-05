@@ -15,6 +15,7 @@
 
         <!-- Custom styles for this template -->
         <link href="../css/dashboard.css" rel="stylesheet">
+        <link href="../css/daterangepicker-bs3.css" rel="stylesheet">
 
     </head>
 
