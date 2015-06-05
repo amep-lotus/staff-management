@@ -204,4 +204,19 @@ class user {
 	    $this->user = $this->db->get_results();
 	}
     }
+    
+    function check_user($username = '') {
+	if(trim($username) == '') {
+	    return false;
+	}
+	if($this->db->select($this->table, "username='$username'")) {
+	    $_user = $this->db->get_results();
+	    if($_user) {
+		return true;
+	    } else {
+		return false;
+	    }
+	}
+	return false;
+    }
 }

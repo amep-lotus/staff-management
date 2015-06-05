@@ -92,7 +92,7 @@ if (isset($_GET['error']) && trim($_GET['error']) != '') {
 
         <div class="container">
 
-            <form class="form-signin" action="login.php" method="POST">
+            <form class="form-signin" id="form_login" action="login.php" method="POST">
 				<?php
 				if (isset($message) && trim($message) != '') {
 					?>

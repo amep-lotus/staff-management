@@ -5,21 +5,27 @@ utility::check_login_and_redirect();
 require_once 'config.php';
 require_once 'classes/class.db.php';
 require_once 'classes/class.user.php';
-require_once 'classes/class.department.php';
 
 $db = new database;
 $user = new user($db);
-$dept = new department($db);
 
+$check_status = $user->check_user($_GET['username']);
+if($check_status) {
+    echo '1';
+} else {
+    echo '0';
+}
+die;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    //utility::pr($_POST); die;
     // Set default user type to Staff
     $type = 3;
-
+    
     // If No department admin exists, then set this user as department admin
-    if (!$user->department_admin_exists($_POST['department_id'])) {
+    if(!$user->department_admin_exists($_POST['department_id'])) {
 	$type = 2;
     }
-
+    
     // Get user data from form
     $_data = array(
 	'name' => $_POST['name'],
@@ -30,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	'description' => $_POST['description'],
 	'type' => $type
     );
-
+    
     // If staff type is set as department admin
     //	    Then no need to check if is_admin checkbox is checked
     //	    This user will be enforced department admin
@@ -39,50 +45,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Then check if is_admin checkbox is checked
     //	    If checked, then force this user as department admin
     //	    If not checked, then keep this user as staff
-
-    if ($type == 2) {
-
+    
+    if($type == 2) {
+	
 	// If username password has been provided, use them
 	// If not provided, then use NAME as username and password
-	if (
-		isset($_POST['username']) && trim($_POST['username']) != '' && isset($_POST['password']) != '' && trim($_POST['password']) != ''
-	) {
+	if(
+		isset($_POST['username']) 
+		&& trim($_POST['username']) != ''
+		&& isset($_POST['password']) != ''
+		&& trim($_POST['password']) != ''
+		) {
 	    $_data['username'] = $_POST['username'];
 	    $_data['password'] = $_POST['password'];
 	} else {
 	    $_data['username'] = $_POST['name'];
 	    $_data['password'] = $_POST['name'];
 	}
-    } else if ($type == 3) {
-	if (
-		isset($_POST['is_admin']) && trim($_POST['is_admin']) != '' && is_numeric($_POST['is_admin']) && ($_POST['is_admin'] == 1)
-	) {
+    } else if($type == 3) {
+	if(
+		isset($_POST['is_admin']) 
+		&& trim($_POST['is_admin']) != '' 
+		&& is_numeric($_POST['is_admin'])
+		&& ($_POST['is_admin'] == 1)
+		) {
 	    $type = 2;
 	    // If username password has been provided, use them
 	    // If not provided, then use NAME as username and password
-	    if (
-		    isset($_POST['username']) && trim($_POST['username']) != '' && isset($_POST['password']) != '' && trim($_POST['password']) != ''
-	    ) {
+	    if(
+		    isset($_POST['username']) 
+		    && trim($_POST['username']) != ''
+		    && isset($_POST['password']) != ''
+		    && trim($_POST['password']) != ''
+		    ) {
 		$_data['username'] = $_POST['username'];
 		$_data['password'] = $_POST['password'];
 	    } else {
 		$_data['username'] = $_POST['name'];
 		$_data['password'] = $_POST['name'];
 	    }
+
 	}
     }
     //utility::pr($_data); die;
     $_data['type'] = $type;
     // Remove any existing user, if any, to Staff user, if new user is set to be admin
-    if ($type == 2) {
+    if($type == 2) {
 	$user->remove_existing_department_admin($_POST['department_id']);
     }
-    if ($user->add($_data)) {
-	header("Location:index.php?action=list_staff");
+    if ($user->update($_data, "id={$_GET['id']}")) {
+	if($type == 2) {
+	    header("Location:index.php?action=list_department_admins");
+	} else if($type == 3) {
+	    header("Location:index.php?action=list_staff");
+	}
     }
 }
 
 $departments = $dept->get_departments();
+$_user = $user->get_user_details($_GET['id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -116,13 +137,16 @@ $departments = $dept->get_departments();
 		include_once 'sidebar.php';
 		?>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+		    <?php
+		    //utility::pr($_user);
+		    ?>
                     <h2 class="sub-header">Add Staff</h2>
                     <form action="" method="POST">
 			<table class="table table-hover table-responsive table-striped">
 			    <tr>
 				<td>Name</td>
 				<td>
-				    <input type="text" name="name" value="" placeholder="Staff Name" />
+				    <input type="text" name="name" value="<?=$_user[0]['name']?>" placeholder="Staff Name" />
 				</td>
 			    </tr>
 			    <tr>
@@ -132,7 +156,11 @@ $departments = $dept->get_departments();
 					<?php
 					if (is_array($departments) && count($departments)) {
 					    foreach ($departments as $department) {
-						echo "<option value='{$department['id']}'>{$department['name']}</option>";
+						if($department['id'] == $_user[0]['department_id']) {
+						    echo "<option selected='selected' value='{$department['id']}'>{$department['name']}</option>";
+						} else {
+						    echo "<option value='{$department['id']}'>{$department['name']}</option>";
+						}
 					    }
 					}
 					?>
@@ -142,46 +170,64 @@ $departments = $dept->get_departments();
 			    <tr>
 				<td>Gender</td>
 				<td>
-				    <input type="radio" name="gender" value="1" checked="checked" /> Male
+				    <input 
+					type="radio" 
+					name="gender" 
+					<?php
+					    if($_user[0]['gender'] == 1) {
+						echo ' checked="checked" ';
+					    }
+					?>
+					value="1" /> Male
 				    <br />
-				    <input type="radio" name="gender" value="2" /> Female
+				    <input 
+					type="radio" 
+					name="gender" 
+					<?php
+					    if($_user[0]['gender'] == 2) {
+						echo ' checked="checked" ';
+					    }
+					?>
+					value="2" /> Female
 				</td>
 			    </tr>
 			    <tr>
 				<td>DOB</td>
 				<td>
-				    <input type="text" name="dob" value="" placeholder="Date of Birth" />
+				    <input type="text" name="dob" value="<?=$_user[0]['dob']?>" placeholder="Date of Birth" />
 				</td>
 			    </tr>
 			    <tr>
 				<td>DOJ</td>
 				<td>
-				    <input type="text" name="doj" value="" placeholder="Date of Joining" />
+				    <input type="text" name="doj" value="<?=$_user[0]['doj']?>" placeholder="Date of Joining" />
 				</td>
 			    </tr>
 			    <tr>
 				<td>Description</td>
 				<td>
-				    <textarea name="description" placeholder="Description"></textarea>
+				    <textarea name="description" placeholder="Description"><?=$_user[0]['description']?></textarea>
 				</td>
 			    </tr>
 			    <tr>
 				<td>Is Department Admin?</td>
 				<td>
-				    <input type="checkbox" name="is_admin" id="is_admin" value="1" />
+				    <input 
+					type="checkbox" 
+					name="is_admin" 
+					<?php
+					if($_user[0]['type'] == 2) {
+					    echo ' checked="checked" ';
+					}
+					?>
+					id="is_admin" 
+					value="1" />
 				</td>
 			    </tr>
 			    <tr id="username_holder" style="display: none;">
 				<td>Username</td>
 				<td>
-				    <input 
-					type="text" 
-					name="username" 
-					value="" 
-					id="username" 
-					placeholder="Admin Username" />
-				    <span id="username_check_status" class="hide"></span>
-				    <span id="username_check_message" class="danger"></span>
+				    <input type="text" name="username" value="<?=$_user[0]['username']?>" placeholder="Admin Username" />
 				</td>
 			    </tr>
 			    <tr id="password_holder" style="display: none;">
@@ -209,52 +255,20 @@ $departments = $dept->get_departments();
         <script src="js/bootstrap.min.js"></script>
 
 	<script>
-            $(document).ready(function () {
-                $('#is_admin').change(function () {
-                    if ($(this).is(':checked')) {
-                        $('#username_holder,#password_holder').show();
-                    } else {
-                        $('#username_holder,#password_holder').hide();
-                    }
-                });
-
-                // Example use of LOAD function
-                /*
-                 $('#username').blur( function() {
-                 $('#username_check_status').load(
-                 'index.php?action=check_staff&username=' + $('#username').val(), function() {
-                 if($('#username_check_status').html() == 0) {
-                 $('#username_check_message').html('Username is available');
-                 $('#username_check_message').css('color', 'green');
-                 }
-                 if($('#username_check_status').html() == 1) {
-                 $('#username_check_message').html('Username is NOT available');
-                 $('#username_check_message').css('color', 'red');
-                 }
-                 });
-                 });
-                 */
-
-                $('#username').blur(function () {
-                    _url = 'index.php';
-                    $.ajax({
-                        method: "GET",
-                        url: _url,
-			data: { action: "check_staff", username: $('#username').val() }
-                    })
-                            .done(function (_data) {
-                                if (_data === '0') {
-                                    $('#username_check_message').html('Username is available');
-                                    $('#username_check_message').css('color', 'green');
-                                }
-                                if (_data === '1') {
-                                    $('#username_check_message').html('Username is NOT available');
-                                    $('#username_check_message').css('color', 'red');
-                                }
-                            });
-                });
-
-            });
+	    $(document).ready( function () {
+		$('#is_admin').change( function () {
+		    if($(this).is(':checked')) {
+			$('#username_holder,#password_holder').show();
+		    } else {
+			$('#username_holder,#password_holder').hide();
+		    }
+		});
+	    });
+	    <?php
+	    if($_user[0]['type'] == 2) {
+		echo "$('#username_holder,#password_holder').show();";
+	    }
+	    ?>
 	</script>
 
     </body>
