@@ -9,12 +9,18 @@ require_once 'classes/class.user.php';
 $db = new database;
 $user = new user($db);
 
-$check_status = $user->check_user($_GET['username']);
+$json = json_decode($_POST['_data'], true);
+
+$check_status = $user->check_user($json['username']);
+$return = array('status' => 0, 'message' => 'Username is NOT available');
 if($check_status) {
-    echo '1';
+    
 } else {
-    echo '0';
+    $return['status'] = 1;
+    $return['message'] = 'Username is available';
 }
+
+echo json_encode($return);
 die;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //utility::pr($_POST); die;

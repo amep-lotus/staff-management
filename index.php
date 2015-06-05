@@ -39,7 +39,7 @@ switch($_GET['action']) {
 		header("Location:edit_staff.php?id=".$_GET['id']);
 		break;
 	case 'check_staff':
-		header("Location:check_staff.php?username=".$_GET['username']);
+		header("Location:check_staff.php?username=".$_POST['username']);
 		break;
 	default:
 		header("Location:logout.php");

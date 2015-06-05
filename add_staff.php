@@ -234,21 +234,21 @@ $departments = $dept->get_departments();
                  });
                  });
                  */
-
                 $('#username').blur(function () {
-                    _url = 'index.php';
+                    _url = 'check_staff.php';
+		    _json = '{"username" : "'+ $('#username').val() +'"}';
                     $.ajax({
-                        method: "GET",
+                        method: "POST",
                         url: _url,
-			data: { action: "check_staff", username: $('#username').val() }
+			data: { _data: _json }
                     })
                             .done(function (_data) {
-                                if (_data === '0') {
-                                    $('#username_check_message').html('Username is available');
+				_json_data = jQuery.parseJSON(_data);
+				$('#username_check_message').html(_json_data.message);
+                                if (_json_data.status === 1) {
                                     $('#username_check_message').css('color', 'green');
                                 }
-                                if (_data === '1') {
-                                    $('#username_check_message').html('Username is NOT available');
+                                if (_json_data.status === 0) {
                                     $('#username_check_message').css('color', 'red');
                                 }
                             });
