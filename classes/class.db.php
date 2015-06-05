@@ -2,9 +2,9 @@
 
 class database {
 
-    public $resource;
-    public $num_rows = null;
-    public $valid_resource = false;
+    private $resource;
+    private $num_rows = null;
+    private $valid_resource = false;
 
     function __construct() {
 	mysql_connect(HOSTNAME, USERNAME, PASSWORD);
@@ -35,7 +35,7 @@ class database {
 	return $return;
     }
 
-    function query($sql = '', $type = 'select') {
+    private function query($sql = '', $type = 'select') {
 	if (trim($sql) != '') {
 	    $this->resource = mysql_query($sql);
 	    if (!$this->resource) {
@@ -54,7 +54,7 @@ class database {
 		    //
 	    }
 	    $this->valid_resource = true;
-	    return $this->valid_resource;
+	    //return $this->valid_resource;
 	} else {
 	    return false;
 	}
@@ -76,10 +76,20 @@ class database {
 
     function delete($table = '', $condition = '') {
 	if (
-		trim($table) == '' || trim($condition) == '' || trim($condition) == '1 = 1' || trim($condition) == '1=1' || trim($condition) == '1 =1' || trim($condition) == '1= 1'
+		trim($table) == ''
+		|| trim($condition) == '' 
+		|| trim($condition) == '1 = 1'
+		|| trim($condition) == '1=1'
+		|| trim($condition) == '1 =1' 
+		|| trim($condition) == '1= 1'
 	) {
 	    return false;
 	}
+	$sql = "DELETE FROM $table WHERE $condition;";
+
+	$this->query($sql);
+
+	return $this->valid_resource;
     }
 
     function insert($table = '', $data = array()) {

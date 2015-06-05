@@ -52,7 +52,7 @@ $leavetype_status = $lt->get_leavetype_status();
                             <tr>
                                 <th>Sr. No</th>
                                 <th>Name</th>
-                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                             <?php
                             if (is_array($leavetypes) && count($leavetypes)) {
@@ -60,7 +60,15 @@ $leavetype_status = $lt->get_leavetype_status();
                                     echo "<tr>";
                                     echo "<td>{$leavetype['id']}</td>";
                                     echo "<td>{$leavetype['name']}</td>";
-                                    echo "<td><a href='#' class='btn btn-info'>{$leavetype_status[$leavetype['status']]}</a></td>";
+                                    echo "<td>"
+					. "<a href='#' class='btn btn-info'>{$leavetype_status[$leavetype['status']]}</a>"
+					. "<br />"
+					. "<br />"
+					. "<a "
+						. "href='index.php?action=delete_leavetype&id={$leavetype['id']}' "
+						. "onclick='return confirm(\"Are you sure you want to delete this : {$leavetype['name']}?\")' "
+						. "class='btn btn-danger'>Delete</a>"
+					. "</td>";
                                     echo "</tr>";
                                 }
                             } else {

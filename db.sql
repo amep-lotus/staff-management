@@ -107,3 +107,7 @@ INSERT INTO `users` (`id`, `name`, `department_id`, `username`, `password`, `sal
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+ALTER TABLE `leave_types` ADD `type` INT( 2 ) NOT NULL DEFAULT '1' COMMENT '1 => Permanent, 2 => Contractual' AFTER `name` ,
+ADD `days` INT( 2 ) NOT NULL COMMENT '# of days allowed for the leave type' AFTER `type` ;
+

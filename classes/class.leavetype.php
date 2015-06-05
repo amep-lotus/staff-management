@@ -27,12 +27,25 @@ class leavetype {
 	if (!utility::is_post()) {
 	    return false;
 	}
-	$leavetype = array('name' => $post['leavetype']);
+	$leavetype = array(
+	    'name' => $post['leavetype'],
+	    'type' => $post['type'],
+	    'days' => $post['days']
+		);
 	return $this->db->insert($this->table, $leavetype);
     }
     
     function get_leavetype_status() {
 	return array(1 => 'Active', 2 => 'Inactive');
+    }
+    
+    function delete_leavetypes($id = 0) {
+	if(!$id) {
+	    header("Location:index.php?action=list_leavetypes&message=1");
+	} else {
+	    $this->db->delete($this->table, "id=$id");
+	    header("Location:index.php?action=list_leavetypes&message=2");
+	}
     }
 
 }

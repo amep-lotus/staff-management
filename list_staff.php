@@ -60,6 +60,7 @@ $status = $user->get_staff_status();
                                 <th>Department</th>
                                 <th>Staff Type</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             <?php
 			    //utility::pr($staff_type);
@@ -71,6 +72,7 @@ $status = $user->get_staff_status();
 					echo "<td>{$departments[$_staff['department_id']]}</td>";
 					echo "<td>{$staff_type[$_staff['staff_type']]}</td>";
 					echo "<td>{$status[$_staff['status']]}</td>";
+					echo "<td><a class='btn btn-info' href='index.php?action=edit_staff&id={$_staff['id']}'> Edit</a></td>";
                                     echo "</tr>";
                                 }
                             } else {

@@ -49,13 +49,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		include_once 'sidebar.php';
 		?>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <h2 class="sub-header">Add Department</h2>
+                    <h2 class="sub-header">Add Leave Type</h2>
                     <form action="" method="POST">
 			<table class="table table-hover table-responsive table-striped">
 			    <tr>
 				<td>Name</td>
 				<td>
 				    <input type="text" name="leavetype" value="" placeholder="Enter Leave Type" />
+				</td>
+			    </tr>
+			    <tr>
+				<td>Type</td>
+				<td>
+				    Permanent <input 
+					type="radio" 
+					name="type" 
+					checked="checked"
+					value="1" />
+				    <br />
+				    Contractual <input 
+					type="radio" 
+					name="type" 
+					value="2" />
+				</td>
+			    </tr>
+			    <tr>
+				<td># of days</td>
+				<td>
+				    <input type="text" name="days" value="" placeholder="Leaves allowed" />
 				</td>
 			    </tr>
 			    <tr>

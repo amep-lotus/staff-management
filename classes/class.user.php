@@ -11,8 +11,8 @@ class user {
 
     public $db;
     public $user = array();
-    public $is_logged_in = false;
-    public $table = 'users';
+    private $is_logged_in = false;
+    private $table = 'users';
 
     function __construct($db) {
 	$this->db = $db;
@@ -29,12 +29,7 @@ class user {
 		$_SESSION['id'] = $this->user[0]['id'];
 		if ($remember_me) {
 		    $rand_hash = sha1(time() . microtime() . rand() . rand());
-		    $sql = ""
-			    . "UPDATE `{$this->table}` "
-			    . "SET `hash` = '$rand_hash' "
-			    . "WHERE"
-			    . " `id` = {$_SESSION['id']}";
-		    $data = array('hash' => $rand_hash, 'status' => 1);
+		    $data = array('hash' => $rand_hash);
 		    $_conditions = "id={$_SESSION['id']}";
 		    if ($this->db->update($this->table, $data, $_conditions)) {
 			setcookie('remember_me', $rand_hash);
@@ -87,6 +82,24 @@ class user {
 	$user['type'] = $post['type'];
 
 	return $this->db->insert($this->table, $user);
+    }
+
+    function update($post = array(), $condition = '') {
+	if (!utility::is_post() || trim($condition) == '') {
+	    return false;
+	}
+	$user = array();
+	$user['name'] = $post['name'];
+	$user['department_id'] = $post['department_id'];
+	$user['gender'] = $post['gender'];
+	$user['username'] = $post['username'];
+	$user['password'] = sha1($post['password']);
+	$user['dob'] = $post['dob'];
+	$user['doj'] = $post['doj'];
+	$user['description'] = $post['description'];
+	$user['type'] = $post['type'];
+
+	return $this->db->update($this->table, $user, $condition);
     }
 
     function is_valid_cookie($cookie = '') {
@@ -151,12 +164,7 @@ class user {
 	if (!$department_id) {
 	    return false;
 	} else {
-	    $sql = ""
-		    . "UPDATE `{$this->table}` "
-		    . "SET `type` = '3' "
-		    . "WHERE"
-		    . " `department_id` = $department_id";
-	    if (mysql_query($sql)) {
+	    if ($this->db->update($this->table, array('type' => 3), "`department_id` = $department_id")) {
 		return true;
 	    } else {
 		return false;
@@ -166,6 +174,16 @@ class user {
 
     function remove_hash($_hash = '') {
 	$this->db->update($this->table, array('hash' => ''), "`hash` = '$_hash'");
+    }
+    
+    function get_user_details($id = 0) {
+	if(!$id) {
+	    return false;
+	}
+	if($this->db->select($this->table, "id=$id")) {
+	    return $this->db->get_results();
+	}
+	return false;
     }
 
 }

@@ -23,6 +23,9 @@ switch($_GET['action']) {
 	case 'add_leavetype':
 		header("Location:add_leavetype.php");
 		break;
+	case 'delete_leavetype':
+		header("Location:delete_leavetype.php?id=".$_GET['id']);
+		break;
 	case 'list_staff':
 		header("Location:list_staff.php");
 		break;
@@ -31,6 +34,9 @@ switch($_GET['action']) {
 		break;
 	case 'add_staff':
 		header("Location:add_staff.php");
+		break;
+	case 'edit_staff':
+		header("Location:edit_staff.php?id=".$_GET['id']);
 		break;
 	default:
 		header("Location:logout.php");
